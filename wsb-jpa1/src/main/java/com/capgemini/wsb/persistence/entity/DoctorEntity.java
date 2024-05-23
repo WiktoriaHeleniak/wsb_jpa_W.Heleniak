@@ -2,14 +2,8 @@ package com.capgemini.wsb.persistence.entity;
 
 import com.capgemini.wsb.persistence.enums.Specialization;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.Collection;
 
 @Entity
 @Table(name = "DOCTOR")
@@ -19,23 +13,31 @@ public class DoctorEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(nullable = false)
+	@Column(name="FIRST_NAME",nullable = false)
 	private String firstName;
 
-	@Column(nullable = false)
+	@Column(name="LAST_NAME",nullable = false)
 	private String lastName;
 
-	@Column(nullable = false)
+	@Column(name="TELEPHONE_NUMBER",nullable = false)
 	private String telephoneNumber;
 
+	@Column(name="EMAIL",nullable = false)
 	private String email;
 
-	@Column(nullable = false)
+	@Column(name="DOCTOR_NUMBER",nullable = false)
 	private String doctorNumber;
 
-	@Column(nullable = false)
+	@Column(name="SPECIALIZATION",nullable = false)
 	@Enumerated(EnumType.STRING)
 	private Specialization specialization;
+
+	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "ADDRESS_ID", referencedColumnName = "ID")
+	private AddressEntity address;
+
+	@OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+	private Collection<VisitEntity> visits;
 
 	public Long getId() {
 		return id;
@@ -93,4 +95,19 @@ public class DoctorEntity {
 		this.specialization = specialization;
 	}
 
+	public AddressEntity getAddress() {
+		return address;
+	}
+
+	public void setAddress(AddressEntity address) {
+		this.address = address;
+	}
+
+	public Collection<VisitEntity> getVisits() {
+		return visits;
+	}
+
+	public void setVisits(Collection<VisitEntity> visits) {
+		this.visits = visits;
+	}
 }

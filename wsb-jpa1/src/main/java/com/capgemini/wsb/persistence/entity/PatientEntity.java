@@ -1,13 +1,12 @@
 package com.capgemini.wsb.persistence.entity;
 
 import java.time.LocalDate;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+
+import javax.persistence.*;
 
 @Entity
 @Table(name = "PATIENT")
@@ -17,22 +16,29 @@ public class PatientEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(nullable = false)
+	@Column(name = "FIRST_NAME", nullable = false)
 	private String firstName;
 
-	@Column(nullable = false)
+	@Column(name = "LAST_NAME", nullable = false)
 	private String lastName;
 
-	@Column(nullable = false)
+	@Column(name= "TELEPHONE_NUMBER", nullable = false)
 	private String telephoneNumber;
 
+	@Column(name= "EMAIL", nullable = false)
 	private String email;
 
-	@Column(nullable = false)
+	@Column(name= "PATIENT_NUMBER", nullable = false)
 	private String patientNumber;
 
-	@Column(nullable = false)
+	@Column(name= "DATE_OF_BIRTH", nullable = false)
 	private LocalDate dateOfBirth;
+
+	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "ADDRESS_ID", referencedColumnName = "ID")
+	private AddressEntity address;
+	@OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+	private Set<VisitEntity> visits;
 
 	public Long getId() {
 		return id;
@@ -90,4 +96,20 @@ public class PatientEntity {
 		this.dateOfBirth = dateOfBirth;
 	}
 
+	public AddressEntity getAddress() {
+		return address;
+	}
+	public PatientEntity() {
+		this.visits = new HashSet<>();
+	}
+	public void setAddress(AddressEntity address) {
+		this.address = address;
+	}
+	public Set<VisitEntity> getVisits() {
+		return visits;
+	}
+
+	public void setVisits(Set<VisitEntity> visits) {
+		this.visits = visits;
+	}
 }
